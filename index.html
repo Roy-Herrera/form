@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Integral Expandida - Asesoría Fiscal y Legal</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        
+        .charts-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #8e44ad, #3498db);
+            color: white;
+            padding: 15px 25px;
+            margin: -25px -25px 25px -25px;
+            font-weight: bold;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            background: #ecf0f1;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button.active {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .position-card, .evaluation-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .position-card:hover, .evaluation-card:hover {
+            border-color: #3498db;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+        }
+        
+        .position-header, .evaluation-header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 12px 20px;
+            font-weight: bold;
+            font-size: 1.0em;
+        }
+        
+        .fiscal-header {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+        
+        .strategic-header {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+        
+        .ventas-header {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+        
+        .produccion-header {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+        }
+        
+        .position-content, .evaluation-content {
+            padding: 15px 20px;
+        }
+        
+        .question-group {
+            margin-bottom: 15px;
+        }
+        
+        .question-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-left: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+        
+        .radio-option input[type="radio"] {
+            margin: 0;
+            transform: scale(1.1);
+        }
+        
+        .radio-option label {
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        
+        .subsection-title {
+            background: #ecf0f1;
+            padding: 8px 15px;
+            margin: 15px 0 10px 0;
+            font-weight: bold;
+            border-left: 4px solid #3498db;
+            color: #2c3e50;
+        }
+        
+        .charts-container {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .chart-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .chart-card h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 250px;
+        }
+        
+        .generate-btn {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.0em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 15px;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .export-btn {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+        
+        .stats-summary {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.8em;
+            margin-top: 3px;
+        }
+        
+        .risk-indicator {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .risk-high { background: #ffebee; color: #c62828; border-left: 4px solid #c62828; }
+        .risk-medium { background: #fff3e0; color: #ef6c00; border-left: 4px solid #ef6c00; }
+        .risk-low { background: #e8f5e8; color: #2e7d32; border-left: 4px solid #2e7d32; }
+        
+        .priority-section {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .radio-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Evaluación Integral Empresarial Expandida</h1>
+            <p>Asesoría Fiscal y Legal - Análisis Completo de Cumplimiento y Riesgos</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="form-section">
+                <div class="section-header">
+                    📋 Evaluación Integral de la Empresa
+                </div>
+                
+                <div class="section-tabs">
+                    <button class="tab-button active" onclick="showTab('positions')">Cumplimiento Manuales</button>
+                    <button class="tab-button" onclick="showTab('fiscal')">Fiscal-Legal</button>
+                    <button class="tab-button" onclick="showTab('admin')">Administrativo</button>
+                    <button class="tab-button" onclick="showTab('ventas')">Ventas</button>
+                    <button class="tab-button" onclick="showTab('produccion')">Producción</button>
+                </div>
+                
+                <!-- SECCIÓN DE CUMPLIMIENTO DE MANUALES (EXPANDIDA) -->
+                <div id="positions" class="tab-content active">
+                    <div class="position-card">
+                        <div class="position-header">Gerente General</div>
+                        <div class="position-content">
+                            <div class="question-group">
+                                <label>1. ¿Se le proporcionó el manual de puestos y funciones al momento de la contratación?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="gg_manual" value="completo"><label>Sí, completo y actualizado</label></div>
+                                    <div class="radio-option"><input type="radio" name="gg_manual" value="desactualizado"><label>Sí, pero desactualizado</label></div>
+                                    <div class="radio-option"><input type="radio" name="gg_manual" value="no"><label>No se proporcionó</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Tiene formación universitaria en Administración de Empresas según especifica el manual?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="gg_formacion" value="completo"><label>Sí, cumple completamente</label></div>
+                                    <div class="radio-option"><input type="radio" name="gg_formacion" value="relacionada"><label>Formación relacionada</label></div>
+                                    <div class="radio-option"><input type="radio" name="gg_formacion" value="no"><label>No cumple</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Conoce y aplica las competencias de liderazgo y gestión empresarial?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="gg_liderazgo" value="completo"><label>Sí, completamente</label></div>
+                                    <div class="radio-option"><input type="radio" name="gg_liderazgo" value="parcial"><label>Parcialmente</label></div>
+                                    <div class="radio-option"><input type="radio" name="gg_liderazgo" value="no"><label>No</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>4. ¿Maneja software de diseño (CAD, SketchUp) y herramientas de gestión (Trello, Asana)?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="gg_software" value="ambos"><label>Sí, ambos tipos</label></div>
+                                    <div class="radio-option"><input type="radio" name="gg_software" value="gestion"><label>Solo herramientas de gestión</label></div>
+                                    <div class="radio-option"><input type="radio" name="gg_software" value="ninguno"><label>No maneja ninguno</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>5. ¿Comprende las regulaciones y normativas guatemaltecas aplicables al negocio?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="gg_regulaciones" value="completo"><label>Sí, completamente actualizado</label></div>
+                                    <div class="radio-option"><input type="radio" name="gg_regulaciones" value="basico"><label>Conocimiento básico</label></div>
+                                    <div class="radio-option"><input type="radio" name="gg_regulaciones" value="no"><label>No las conoce</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="position-card">
+                        <div class="position-header">Gerente Operativo</div>
+                        <div class="position-content">
+                            <div class="question-group">
+                                <label>1. ¿Cuenta con formación en Ingeniería Civil/Industrial o Arquitectura según el manual?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="go_formacion" value="exacta"><label>Sí, cumple exactamente</label></div>
+                                    <div class="radio-option"><input type="radio" name="go_formacion" value="relacionada"><label>Formación relacionada</label></div>
+                                    <div class="radio-option"><input type="radio" name="go_formacion" value="no"><label>No cumple</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Tiene certificación ISO 9001 o conocimientos en gestión de calidad?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="go_iso" value="certificado"><label>Sí, certificado</label></div>
+                                    <div class="radio-option"><input type="radio" name="go_iso" value="teorico"><label>Conocimiento teórico</label></div>
+                                    <div class="radio-option"><input type="radio" name="go_iso" value="no"><label>No conoce</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Coordina efectivamente equipos multidisciplinarios (diseñadores, instaladores, proveedores)?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="go_coordinacion" value="sistematico"><label>Sí, sistemáticamente</label></div>
+                                    <div class="radio-option"><input type="radio" name="go_coordinacion" value="ocasional"><label>Ocasionalmente</label></div>
+                                    <div class="radio-option"><input type="radio" name="go_coordinacion" value="no"><label>No coordina</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>4. ¿Supervisa el cumplimiento de normativas de seguridad según legislación guatemalteca?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="go_seguridad" value="formal"><label>Sí, con procedimientos formales</label></div>
+                                    <div class="radio-option"><input type="radio" name="go_seguridad" value="basico"><label>Supervisión básica</label></div>
+                                    <div class="radio-option"><input type="radio" name="go_seguridad" value="no"><label>No supervisa</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="position-card">
+                        <div class="position-header">Encargado Operativo</div>
+                        <div class="position-content">
+                            <div class="question-group">
+                                <label>1. ¿Tiene formación técnica o licenciatura en Ingeniería/Arquitectura según especifica el manual?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="eo_formacion" value="completo"><label>Sí, cumple completamente</label></div>
+                                    <div class="radio-option"><input type="radio" name="eo_formacion" value="tecnica"><label>Formación técnica relacionada</label></div>
+                                    <div class="radio-option"><input type="radio" name="eo_formacion" value="no"><label>No cumple</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Conoce normativas de seguridad laboral y prevención de riesgos en Guatemala?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="eo_normas_seguridad" value="formal"><label>Sí, con capacitación formal</label></div>
+                                    <div class="radio-option"><input type="radio" name="eo_normas_seguridad" value="basico"><label>Conocimiento básico</label></div>
+                                    <div class="radio-option"><input type="radio" name="eo_normas_seguridad" value="no"><label>No las conoce</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Realiza inspecciones de calidad durante y al final de proyectos?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="eo_inspecciones" value="sistematico"><label>Sí, sistemáticamente con registros</label></div>
+                                    <div class="radio-option"><input type="radio" name="eo_inspecciones" value="ocasional"><label>Ocasionalmente</label></div>
+                                    <div class="radio-option"><input type="radio" name="eo_inspecciones" value="no"><label>No realiza</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>4. ¿Redacta informes detallados sobre progreso, costos y problemas de proyectos?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="eo_informes" value="completos"><label>Sí, reportes completos</label></div>
+                                    <div class="radio-option"><input type="radio" name="eo_informes" value="basicos"><label>Reportes básicos</label></div>
+                                    <div class="radio-option"><input type="radio" name="eo_informes" value="no"><label>No elabora informes</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="position-card">
+                        <div class="position-header">Contador</div>
+                        <div class="position-content">
+                            <div class="question-group">
+                                <label>1. ¿Está colegiado activo en el Colegio de Contadores Públicos y Auditores de Guatemala?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="cont_colegiado" value="activo"><label>Sí, colegiado activo</label></div>
+                                    <div class="radio-option"><input type="radio" name="cont_colegiado" value="proceso"><label>En proceso de colegiación</label></div>
+                                    <div class="radio-option"><input type="radio" name="cont_colegiado" value="no"><label>No está colegiado</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Tiene especialización en Contabilidad Financiera o Control de Gestión?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="cont_especializacion" value="formal"><label>Sí, especialización formal</label></div>
+                                    <div class="radio-option"><input type="radio" name="cont_especializacion" value="capacitacion"><label>Capacitación relacionada</label></div>
+                                    <div class="radio-option"><input type="radio" name="cont_especializacion" value="no"><label>No tiene especialización</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Maneja programas contables especializados y conoce normativas SAT?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="cont_sat" value="completo"><label>Sí, dominio completo</label></div>
+                                    <div class="radio-option"><input type="radio" name="cont_sat" value="basico"><label>Conocimiento básico</label></div>
+                                    <div class="radio-option"><input type="radio" name="cont_sat" value="no"><label>No los maneja</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>4. ¿Tiene experiencia específica en empresas de construcción/decoración?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="cont_experiencia" value="mas3"><label>Más de 3 años</label></div>
+                                    <div class="radio-option"><input type="radio" name="cont_experiencia" value="1a3"><label>1-3 años</label></div>
+                                    <div class="radio-option"><input type="radio" name="cont_experiencia" value="sin"><label>Sin experiencia específica</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="position-card">
+                        <div class="position-header">Encargado de Ventas</div>
+                        <div class="position-content">
+                            <div class="question-group">
+                                <label>1. ¿Tiene formación como Perito Contador o 4to semestre de Administración según manual?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="ev_formacion" value="exacta"><label>Sí, cumple exactamente</label></div>
+                                    <div class="radio-option"><input type="radio" name="ev_formacion" value="equivalente"><label>Formación equivalente</label></div>
+                                    <div class="radio-option"><input type="radio" name="ev_formacion" value="no"><label>No cumple</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Tiene especialización en ventas, negociación o decoración e interiorismo?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="ev_especializacion" value="formal"><label>Sí, especialización formal</label></div>
+                                    <div class="radio-option"><input type="radio" name="ev_especializacion" value="capacitacion"><label>Capacitación relacionada</label></div>
+                                    <div class="radio-option"><input type="radio" name="ev_especializacion" value="no"><label>No tiene especialización</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Conoce marketing digital y gestión de relaciones con clientes?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="ev_marketing" value="practico"><label>Sí, con aplicación práctica</label></div>
+                                    <div class="radio-option"><input type="radio" name="ev_marketing" value="teorico"><label>Conocimiento teórico</label></div>
+                                    <div class="radio-option"><input type="radio" name="ev_marketing" value="no"><label>No conoce</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="position-card">
+                        <div class="position-header">Personal Operativo Adicional</div>
+                        <div class="position-content">
+                            <div class="subsection-title">Vendedor</div>
+                            <div class="question-group">
+                                <label>1. ¿Tiene al menos primer semestre de Administración según especifica el manual?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="vend_formacion" value="cumple"><label>Sí, cumple o supera</label></div>
+                                    <div class="radio-option"><input type="radio" name="vend_formacion" value="equivalente"><label>Formación equivalente</label></div>
+                                    <div class="radio-option"><input type="radio" name="vend_formacion" value="no"><label>No cumple</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Conoce técnicas de negociación y tendencias de decoración?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="vend_tecnicas" value="formal"><label>Sí, con capacitación formal</label></div>
+                                    <div class="radio-option"><input type="radio" name="vend_tecnicas" value="empirico"><label>Conocimiento empírico</label></div>
+                                    <div class="radio-option"><input type="radio" name="vend_tecnicas" value="no"><label>No conoce</label></div>
+                                </div>
+                            </div>
+                            
+                            <div class="subsection-title">Fabricante</div>
+                            <div class="question-group">
+                                <label>3. ¿Tiene licenciatura en Arquitectura o formación en Ingeniería Industrial?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="fab_formacion" value="completo"><label>Sí, cumple completamente</label></div>
+                                    <div class="radio-option"><input type="radio" name="fab_formacion" value="tecnica"><label>Formación técnica relacionada</label></div>
+                                    <div class="radio-option"><input type="radio" name="fab_formacion" value="no"><label>No cumple</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>4. ¿Conoce tecnología de materiales y técnicas de carpintería/metalurgia?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="fab_tecnologia" value="experiencia"><label>Sí, con experiencia práctica</label></div>
+                                    <div class="radio-option"><input type="radio" name="fab_tecnologia" value="basico"><label>Conocimiento básico</label></div>
+                                    <div class="radio-option"><input type="radio" name="fab_tecnologia" value="no"><label>No conoce</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>5. ¿Maneja diseño asistido por computadora (CAD) según el manual?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="fab_cad" value="avanzado"><label>Sí, dominio avanzado</label></div>
+                                    <div class="radio-option"><input type="radio" name="fab_cad" value="basico"><label>Uso básico</label></div>
+                                    <div class="radio-option"><input type="radio" name="fab_cad" value="no"><label>No maneja</label></div>
+                                </div>
+                            </div>
+                            
+                            <div class="subsection-title">Instalador</div>
+                            <div class="question-group">
+                                <label>6. ¿Tiene experiencia en instalaciones eléctricas y sistemas arquitectónicos?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="inst_experiencia" value="mas3"><label>Más de 3 años</label></div>
+                                    <div class="radio-option"><input type="radio" name="inst_experiencia" value="1a3"><label>1-3 años</label></div>
+                                    <div class="radio-option"><input type="radio" name="inst_experiencia" value="menos1"><label>Menos de 1 año</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>7. ¿Conoce normativas de seguridad en instalaciones según legislación guatemalteca?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="inst_seguridad" value="formal"><label>Sí, con capacitación formal</label></div>
+                                    <div class="radio-option"><input type="radio" name="inst_seguridad" value="basico"><label>Conocimiento básico</label></div>
+                                    <div class="radio-option"><input type="radio" name="inst_seguridad" value="no"><label>No las conoce</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SECCIÓN FISCAL-LEGAL EXPANDIDA -->
+                <div id="fiscal" class="tab-content">
+                    <div class="evaluation-card">
+                        <div class="evaluation-header fiscal-header">Cumplimiento Fiscal SAT - Aspectos Críticos</div>
+                        <div class="evaluation-content">
+                            <div class="question-group">
+                                <label>1. ¿En qué régimen fiscal está inscrita la empresa ante SAT?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="regimen_fiscal" value="utilidades"><label>Sobre Utilidades de Actividades Lucrativas</label></div>
+                                    <div class="radio-option"><input type="radio" name="regimen_fiscal" value="opcional"><label>Régimen Opcional Simplificado</label></div>
+                                    <div class="radio-option"><input type="radio" name="regimen_fiscal" value="pequeno"><label>Pequeño Contribuyente</label></div>
+                                    <div class="radio-option"><input type="radio" name="regimen_fiscal" value="nosabe"><label>No sabe</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Los estados financieros reflejan la realidad actual de la empresa?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="estados_financieros" value="actualizados"><label>Sí, completamente actualizados</label></div>
+                                    <div class="radio-option"><input type="radio" name="estados_financieros" value="parcial"><label>Parcialmente actualizados</label></div>
+                                    <div class="radio-option"><input type="radio" name="estados_financieros" value="no"><label>No están actualizados</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Existen compromisos financieros no registrados?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="compromisos_financieros" value="no"><label>No, todo está registrado</label></div>
+                                    <div class="radio-option"><input type="radio" name="compromisos_financieros" value="menores"><label>Algunos compromisos menores</label></div>
+                                    <div class="radio-option"><input type="radio" name="compromisos_financieros" value="significativos"><label>Sí, compromisos significativos</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>4. ¿Cómo se maneja el flujo de efectivo?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="flujo_efectivo" value="formalizado"><label>Sistema formalizado con proyecciones</label></div>
+                                    <div class="radio-option"><input type="radio" name="flujo_efectivo" value="basico"><label>Control básico</label></div>
+                                    <div class="radio-option"><input type="radio" name="flujo_efectivo" value="sin_control"><label>Sin control formal</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>5. ¿La empresa tiene al día sus declaraciones fiscales?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="declaraciones_fiscales" value="al_dia"><label>Sí, todas al día</label></div>
+                                    <div class="radio-option"><input type="radio" name="declaraciones_fiscales" value="retrasos_menores"><label>Retrasos menores (1-3 meses)</label></div>
+                                    <div class="radio-option"><input type="radio" name="declaraciones_fiscales" value="retrasos_mayores"><label>Retrasos mayores (+3 meses)</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>6. ¿Cuenta con asesoría contable-fiscal externa?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="asesoria_fiscal" value="permanente"><label>Sí, asesoría permanente</label></div>
+                                    <div class="radio-option"><input type="radio" name="asesoria_fiscal" value="ocasional"><label>Asesoría ocasional</label></div>
+                                    <div class="radio-option"><input type="radio" name="asesoria_fiscal" value="no"><label>No cuenta con asesoría</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="evaluation-card">
+                        <div class="evaluation-header fiscal-header">Situación Laboral y Cumplimiento Legal</div>
+                        <div class="evaluation-content">
+                            <div class="question-group">
+                                <label>1. ¿Están todos los empleados en planilla con prestaciones completas?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="planilla_empleados" value="todos"><label>Sí, todos en planilla</label></div>
+                                    <div class="radio-option"><input type="radio" name="planilla_empleados" value="mayoria"><label>Mayoría en planilla</label></div>
+                                    <div class="radio-option"><input type="radio" name="planilla_empleados" value="mixto"><label>Mixto (planilla y honorarios)</label></div>
+                                    <div class="radio-option"><input type="radio" name="planilla_empleados" value="honorarios"><label>Principalmente por honorarios</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Conocen las reformas recientes al Código de Trabajo guatemalteco?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="reformas_laborales" value="completo"><label>Sí, completamente actualizados</label></div>
+                                    <div class="radio-option"><input type="radio" name="reformas_laborales" value="parcial"><label>Conocimiento parcial</label></div>
+                                    <div class="radio-option"><input type="radio" name="reformas_laborales" value="no"><label>No las conocen</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Tienen reglamentos internos de trabajo establecidos?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="reglamentos_internos" value="formalizados"><label>Sí, formalizados y aprobados</label></div>
+                                    <div class="radio-option"><input type="radio" name="reglamentos_internos" value="desarrollo"><label>En desarrollo</label></div>
+                                    <div class="radio-option"><input type="radio" name="reglamentos_internos" value="no"><label>No existen</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>4. ¿La empresa tiene algún conflicto laboral pendiente?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="conflictos_laborales" value="ninguno"><label>No, ningún conflicto</label></div>
+                                    <div class="radio-option"><input type="radio" name="conflictos_laborales" value="menores"><label>Conflictos menores</label></div>
+                                    <div class="radio-option"><input type="radio" name="conflictos_laborales" value="significativos"><label>Conflictos significativos</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>5. ¿Están al día los pagos del IGSS y demás contribuciones laborales?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="pagos_igss" value="al_dia"><label>Sí, todos al día</label></div>
+                                    <div class="radio-option"><input type="radio" name="pagos_igss" value="retraso_menor"><label>Retraso menor (1-2 meses)</label></div>
+                                    <div class="radio-option"><input type="radio" name="pagos_igss" value="retraso_mayor"><label>Retraso significativo</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="evaluation-card">
+                        <div class="evaluation-header fiscal-header">Riesgos Fiscales y Contingencias</div>
+                        <div class="evaluation-content">
+                            <div class="question-group">
+                                <label>1. ¿Ha tenido fiscalizaciones de SAT en los últimos 3 años?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="fiscalizaciones_sat" value="ninguna"><label>No, ninguna fiscalización</label></div>
+                                    <div class="radio-option"><input type="radio" name="fiscalizaciones_sat" value="sin_observaciones"><label>Sí, pero sin observaciones</label></div>
+                                    <div class="radio-option"><input type="radio" name="fiscalizaciones_sat" value="con_observaciones"><label>Sí, con observaciones</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Existe alguna deuda tributaria pendiente con SAT?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="deuda_tributaria" value="ninguna"><label>No hay deudas</label></div>
+                                    <div class="radio-option"><input type="radio" name="deuda_tributaria" value="menor"><label>Deuda menor</label></div>
+                                    <div class="radio-option"><input type="radio" name="deuda_tributaria" value="significativa"><label>Deuda significativa</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿La empresa maneja adecuadamente los libros de compras y ventas (IVA)?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="libros_iva" value="completo"><label>Sí, completamente actualizados</label></div>
+                                    <div class="radio-option"><input type="radio" name="libros_iva" value="parcial"><label>Parcialmente actualizados</label></div>
+                                    <div class="radio-option"><input type="radio" name="libros_iva" value="deficiente"><label>Manejo deficiente</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>4. ¿Tiene contingencias legales (demandas, procesos judiciales)?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="contingencias_legales" value="ninguna"><label>No hay contingencias</label></div>
+                                    <div class="radio-option"><input type="radio" name="contingencias_legales" value="menores"><label>Contingencias menores</label></div>
+                                    <div class="radio-option"><input type="radio" name="contingencias_legales" value="significativas"><label>Contingencias significativas</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SECCIÓN ADMINISTRATIVA EXPANDIDA -->
+                <div id="admin" class="tab-content">
+                    <div class="evaluation-card">
+                        <div class="evaluation-header admin-header">Procedimientos Administrativos</div>
+                        <div class="evaluation-content">
+                            <div class="question-group">
+                                <label>1. ¿Cuenta con un plan estratégico documentado y vigente?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="plan_estrategico" value="si"><label>Sí</label></div>
+                                    <div class="radio-option"><input type="radio" name="plan_estrategico" value="parcialmente"><label>Parcialmente</label></div>
+                                    <div class="radio-option"><input type="radio" name="plan_estrategico" value="no"><label>No</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Con qué frecuencia revisa el cumplimiento de los manuales de funciones de cada área?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="revision_manuales" value="mensual"><label>Mensual</label></div>
+                                    <div class="radio-option"><input type="radio" name="revision_manuales" value="trimestral"><label>Trimestral</label></div>
+                                    <div class="radio-option"><input type="radio" name="revision_manuales" value="semestral"><label>Semestral</label></div>
+                                    <div class="radio-option"><input type="radio" name="revision_manuales" value="anual"><label>Anual</label></div>
+                                    <div class="radio-option"><input type="radio" name="revision_manuales" value="nunca"><label>Nunca</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Cómo se gestiona la comunicación y coordinación entre los distintos departamentos?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="comunicacion_depto" value="reuniones"><label>Reuniones periódicas</label></div>
+                                    <div class="radio-option"><input type="radio" name="comunicacion_depto" value="informes"><label>Informes escritos</label></div>
+                                    <div class="radio-option"><input type="radio" name="comunicacion_depto" value="digitales"><label>Herramientas digitales (CRM, correos, intranet)</label></div>
+                                    <div class="radio-option"><input type="radio" name="comunicacion_depto" value="no_formal"><label>No se gestiona formalmente</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>4. ¿Han ocurrido cambios recientes en la estructura organizacional?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="cambios_estructura" value="significativos"><label>Sí, cambios significativos</label></div>
+                                    <div class="radio-option"><input type="radio" name="cambios_estructura" value="menores"><label>Cambios menores</label></div>
+                                    <div class="radio-option"><input type="radio" name="cambios_estructura" value="no"><label>No ha habido cambios</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="evaluation-card">
+                        <div class="evaluation-header admin-header">Objetivos y Gestión</div>
+                        <div class="evaluation-content">
+                            <div class="question-group">
+                                <label>1. ¿Qué indicadores de gestión utiliza para evaluar el desempeño general de la empresa?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="indicadores_desempeno" value="financieros"><label>Financieros</label></div>
+                                    <div class="radio-option"><input type="radio" name="indicadores_desempeno" value="productividad"><label>Productividad</label></div>
+                                    <div class="radio-option"><input type="radio" name="indicadores_desempeno" value="cliente"><label>Satisfacción del cliente</label></div>
+                                    <div class="radio-option"><input type="radio" name="indicadores_desempeno" value="laboral"><label>Ambiente laboral</label></div>
+                                    <div class="radio-option"><input type="radio" name="indicadores_desempeno" value="otro"><label>Otro</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Con qué periodicidad se miden y reportan los resultados de los objetivos estratégicos?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="frecuencia_objetivos" value="mensual"><label>Mensual</label></div>
+                                    <div class="radio-option"><input type="radio" name="frecuencia_objetivos" value="trimestral"><label>Trimestral</label></div>
+                                    <div class="radio-option"><input type="radio" name="frecuencia_objetivos" value="semestral"><label>Semestral</label></div>
+                                    <div class="radio-option"><input type="radio" name="frecuencia_objetivos" value="anual"><label>Anual</label></div>
+                                    <div class="radio-option"><input type="radio" name="frecuencia_objetivos" value="no_miden"><label>No se miden</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Considera que los objetivos actuales están alineados con la misión y visión de la empresa?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="alineacion_objetivos" value="totalmente"><label>Totalmente alineados</label></div>
+                                    <div class="radio-option"><input type="radio" name="alineacion_objetivos" value="parcialmente"><label>Parcialmente alineados</label></div>
+                                    <div class="radio-option"><input type="radio" name="alineacion_objetivos" value="no_alineados"><label>No están alineados</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="evaluation-card">
+                        <div class="evaluation-header admin-header">Toma de Decisiones</div>
+                        <div class="evaluation-content">
+                            <div class="question-group">
+                                <label>1. ¿Qué herramientas o metodologías cree que podrían fortalecer la toma de decisiones?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="herramientas_decisiones" value="analisis_datos"><label>Análisis de datos</label></div>
+                                    <div class="radio-option"><input type="radio" name="herramientas_decisiones" value="benchmarking"><label>Benchmarking</label></div>
+                                    <div class="radio-option"><input type="radio" name="herramientas_decisiones" value="consultoria"><label>Consultoría externa</label></div>
+                                    <div class="radio-option"><input type="radio" name="herramientas_decisiones" value="reuniones"><label>Reuniones gerenciales</label></div>
+                                    <div class="radio-option"><input type="radio" name="herramientas_decisiones" value="otro"><label>Otro</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Qué recomendaciones aportaría para mejorar la evaluación de desempeño en la gerencia?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="mejora_evaluacion" value="indicadores"><label>Uso de indicadores de objetivos</label></div>
+                                    <div class="radio-option"><input type="radio" name="mejora_evaluacion" value="retroalimentacion"><label>Mayor retroalimentación al personal</label></div>
+                                    <div class="radio-option"><input type="radio" name="mejora_evaluacion" value="evaluacion_360"><label>Evaluaciones 360°</label></div>
+                                    <div class="radio-option"><input type="radio" name="mejora_evaluacion" value="no_necesarios"><label>No se consideran necesarios</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Cómo percibe la efectividad de los procesos contables dentro de la organización?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="contabilidad_efectividad" value="muy_efectivos"><label>Muy efectivos</label></div>
+                                    <div class="radio-option"><input type="radio" name="contabilidad_efectividad" value="efectivos"><label>Efectivos</label></div>
+                                    <div class="radio-option"><input type="radio" name="contabilidad_efectividad" value="poco_efectivos"><label>Poco efectivos</label></div>
+                                    <div class="radio-option"><input type="radio" name="contabilidad_efectividad" value="ineficientes"><label>Ineficientes</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SECCIÓN DE VENTAS EXPANDIDA -->
+                <div id="ventas" class="tab-content">
+                    <div class="evaluation-card">
+                        <div class="evaluation-header ventas-header">Procedimientos de Ventas</div>
+                        <div class="evaluation-content">
+                            <div class="question-group">
+                                <label>1. ¿Existen procesos definidos para la captación y seguimiento de clientes?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="procesos_captacion" value="documentados"><label>Sí, documentados</label></div>
+                                    <div class="radio-option"><input type="radio" name="procesos_captacion" value="informales"><label>Sí, informales</label></div>
+                                    <div class="radio-option"><input type="radio" name="procesos_captacion" value="no_existen"><label>No existen</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Qué herramientas utiliza para gestionar las relaciones con clientes (CRM, reportes, etc.)?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="herramientas_crm" value="crm"><label>CRM</label></div>
+                                    <div class="radio-option"><input type="radio" name="herramientas_crm" value="reportes"><label>Reportes mensuales</label></div>
+                                    <div class="radio-option"><input type="radio" name="herramientas_crm" value="hojas_calculo"><label>Hojas de cálculo</label></div>
+                                    <div class="radio-option"><input type="radio" name="herramientas_crm" value="no_usa"><label>No se usan herramientas</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Cómo se asegura la aplicación de políticas de precios y descuentos?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="politicas_precios" value="supervision_directa"><label>Supervisión directa</label></div>
+                                    <div class="radio-option"><input type="radio" name="politicas_precios" value="revisiones_aleatorias"><label>Revisiones aleatorias</label></div>
+                                    <div class="radio-option"><input type="radio" name="politicas_precios" value="reporte_ventas"><label>Reporte de ventas</label></div>
+                                    <div class="radio-option"><input type="radio" name="politicas_precios" value="no_aseguran"><label>No se aseguran</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="evaluation-card">
+                        <div class="evaluation-header ventas-header">Objetivos de Ventas</div>
+                        <div class="evaluation-content">
+                            <div class="question-group">
+                                <label>1. ¿Cuáles son los indicadores de desempeño más relevantes en su área?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="indicadores_ventas" value="cuotas"><label>Cuotas de ventas</label></div>
+                                    <div class="radio-option"><input type="radio" name="indicadores_ventas" value="volumen"><label>Volumen de ventas</label></div>
+                                    <div class="radio-option"><input type="radio" name="indicadores_ventas" value="satisfaccion"><label>Satisfacción de cliente</label></div>
+                                    <div class="radio-option"><input type="radio" name="indicadores_ventas" value="nuevos_clientes"><label>Nuevos clientes captados</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Con qué frecuencia revisa el avance en el cumplimiento de metas de ventas?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="frecuencia_metas" value="semanal"><label>Semanal</label></div>
+                                    <div class="radio-option"><input type="radio" name="frecuencia_metas" value="mensual"><label>Mensual</label></div>
+                                    <div class="radio-option"><input type="radio" name="frecuencia_metas" value="trimestral"><label>Trimestral</label></div>
+                                    <div class="radio-option"><input type="radio" name="frecuencia_metas" value="anual"><label>Anual</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Qué porcentaje aproximado de metas se cumplió en el último período?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="cumplimiento_metas" value="0_25"><label>0 - 25%</label></div>
+                                    <div class="radio-option"><input type="radio" name="cumplimiento_metas" value="26_50"><label>26 - 50%</label></div>
+                                    <div class="radio-option"><input type="radio" name="cumplimiento_metas" value="51_75"><label>51 - 75%</label></div>
+                                    <div class="radio-option"><input type="radio" name="cumplimiento_metas" value="76_100"><label>76 - 100%</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="evaluation-card">
+                        <div class="evaluation-header ventas-header">Decisiones y Mejoras en Ventas</div>
+                        <div class="evaluation-content">
+                            <div class="question-group">
+                                <label>1. ¿Qué obstáculos principales identifica para cumplir las metas de ventas?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="obstaculos_ventas" value="falta_clientes"><label>Falta de clientes potenciales</label></div>
+                                    <div class="radio-option"><input type="radio" name="obstaculos_ventas" value="precios_poco_competitivos"><label>Precios poco competitivos</label></div>
+                                    <div class="radio-option"><input type="radio" name="obstaculos_ventas" value="falta_capacitacion"><label>Falta de capacitación</label></div>
+                                    <div class="radio-option"><input type="radio" name="obstaculos_ventas" value="procesos_lentos"><label>Procesos internos lentos</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Qué cambios propondría para mejorar la retención y fidelización de clientes?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="mejoras_retencion" value="servicio_postventa"><label>Mejor servicio postventa</label></div>
+                                    <div class="radio-option"><input type="radio" name="mejoras_retencion" value="programas_fidelizacion"><label>Programas de fidelización</label></div>
+                                    <div class="radio-option"><input type="radio" name="mejoras_retencion" value="descuentos_especiales"><label>Descuentos especiales</label></div>
+                                    <div class="radio-option"><input type="radio" name="mejoras_retencion" value="seguimiento_personalizado"><label>Mayor seguimiento personalizado</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Qué tipo de capacitaciones considera necesarias para mejorar los resultados del equipo de ventas?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="capacitaciones_ventas" value="negociacion"><label>Técnicas de negociación</label></div>
+                                    <div class="radio-option"><input type="radio" name="capacitaciones_ventas" value="objeciones"><label>Manejo de objeciones</label></div>
+                                    <div class="radio-option"><input type="radio" name="capacitaciones_ventas" value="herramientas_digitales"><label>Uso de herramientas digitales</label></div>
+                                    <div class="radio-option"><input type="radio" name="capacitaciones_ventas" value="atencion_cliente"><label>Atención al cliente</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="evaluation-card">
+                        <div class="evaluation-header ventas-header">Conocimiento del Mercado</div>
+                        <div class="evaluation-content">
+                            <div class="question-group">
+                                <label>1. ¿Quiénes son los principales clientes/mercado objetivo?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="mercado_objetivo" value="residencial_alta"><label>Residencial de alta gama</label></div>
+                                    <div class="radio-option"><input type="radio" name="mercado_objetivo" value="comercial"><label>Comercial/corporativo</label></div>
+                                    <div class="radio-option"><input type="radio" name="mercado_objetivo" value="mixto"><label>Mixto</label></div>
+                                    <div class="radio-option"><input type="radio" name="mercado_objetivo" value="institucional"><label>Institucional/gubernamental</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Quiénes son los principales competidores?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="conocimiento_competencia" value="identificados"><label>Competidores identificados y analizados</label></div>
+                                    <div class="radio-option"><input type="radio" name="conocimiento_competencia" value="parcial"><label>Conocimiento parcial de competencia</label></div>
+                                    <div class="radio-option"><input type="radio" name="conocimiento_competencia" value="no_conoce"><label>No conoce la competencia</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Cuáles son las ventajas competitivas de la empresa?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="ventajas_competitivas" value="precios"><label>Precios competitivos</label></div>
+                                    <div class="radio-option"><input type="radio" name="ventajas_competitivas" value="calidad"><label>Calidad superior</label></div>
+                                    <div class="radio-option"><input type="radio" name="ventajas_competitivas" value="servicio"><label>Servicio personalizado</label></div>
+                                    <div class="radio-option"><input type="radio" name="ventajas_competitivas" value="innovacion"><label>Innovación/tecnología</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>4. ¿Qué indicadores utilizan para medir la satisfacción de los clientes?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="satisfaccion_clientes" value="encuestas"><label>Encuestas de satisfacción</label></div>
+                                    <div class="radio-option"><input type="radio" name="satisfaccion_clientes" value="recompras"><label>Recompras de clientes</label></div>
+                                    <div class="radio-option"><input type="radio" name="satisfaccion_clientes" value="nps"><label>Índice NPS (Net Promoter Score)</label></div>
+                                    <div class="radio-option"><input type="radio" name="satisfaccion_clientes" value="quejas"><label>Cantidad de quejas/reclamos</label></div>
+                                    <div class="radio-option"><input type="radio" name="satisfaccion_clientes" value="otro"><label>Otro</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SECCIÓN DE PRODUCCIÓN EXPANDIDA -->
+                <div id="produccion" class="tab-content">
+                    <div class="evaluation-card">
+                        <div class="evaluation-header produccion-header">Procedimientos de Producción</div>
+                        <div class="evaluation-content">
+                            <div class="question-group">
+                                <label>1. ¿Existen procedimientos documentados para cada etapa del proceso de producción?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="procedimientos_produccion" value="actualizados"><label>Sí, actualizados</label></div>
+                                    <div class="radio-option"><input type="radio" name="procedimientos_produccion" value="desactualizados"><label>Sí, desactualizados</label></div>
+                                    <div class="radio-option"><input type="radio" name="procedimientos_produccion" value="no_existen"><label>No existen</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Qué controles existen para asegurar la calidad del producto final?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="controles_calidad" value="inspeccion"><label>Inspección de calidad</label></div>
+                                    <div class="radio-option"><input type="radio" name="controles_calidad" value="muestreo"><label>Muestreo en línea</label></div>
+                                    <div class="radio-option"><input type="radio" name="controles_calidad" value="estadistico"><label>Control estadístico de procesos</label></div>
+                                    <div class="radio-option"><input type="radio" name="controles_calidad" value="no_formales"><label>No existen controles formales</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Qué equipo de seguridad se les proporciona para la realización de las labores?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="equipo_seguridad" value="completo"><label>Equipo completo</label></div>
+                                    <div class="radio-option"><input type="radio" name="equipo_seguridad" value="parcial"><label>Equipo parcial</label></div>
+                                    <div class="radio-option"><input type="radio" name="equipo_seguridad" value="no_proporciona"><label>No se proporciona</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="evaluation-card">
+                        <div class="evaluation-header produccion-header">Objetivos de Producción</div>
+                        <div class="evaluation-content">
+                            <div class="question-group">
+                                <label>1. ¿Cuáles son los principales objetivos de producción?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="objetivos_produccion" value="desperdicios"><label>Reducir desperdicios</label></div>
+                                    <div class="radio-option"><input type="radio" name="objetivos_produccion" value="eficiencia"><label>Aumentar eficiencia</label></div>
+                                    <div class="radio-option"><input type="radio" name="objetivos_produccion" value="calidad"><label>Mejorar la calidad</label></div>
+                                    <div class="radio-option"><input type="radio" name="objetivos_produccion" value="tiempos"><label>Reducir tiempos de entrega</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Cómo se mide el cumplimiento de los tiempos de producción?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="medicion_tiempos" value="diarios"><label>Reportes diarios</label></div>
+                                    <div class="radio-option"><input type="radio" name="medicion_tiempos" value="semanales"><label>Reportes semanales</label></div>
+                                    <div class="radio-option"><input type="radio" name="medicion_tiempos" value="mensuales"><label>Reportes mensuales</label></div>
+                                    <div class="radio-option"><input type="radio" name="medicion_tiempos" value="no_miden"><label>No se miden formalmente</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Qué indicadores se utilizan para evaluar la eficiencia y calidad de la producción?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="indicadores_produccion" value="ciclos"><label>Tiempos de ciclos</label></div>
+                                    <div class="radio-option"><input type="radio" name="indicadores_produccion" value="defectos"><label>Tasas de defectos</label></div>
+                                    <div class="radio-option"><input type="radio" name="indicadores_produccion" value="productividad"><label>Productividad por hora</label></div>
+                                    <div class="radio-option"><input type="radio" name="indicadores_produccion" value="no_miden"><label>No se miden</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="evaluation-card">
+                        <div class="evaluation-header produccion-header">Mejoras y Decisiones de Producción</div>
+                        <div class="evaluation-content">
+                            <div class="question-group">
+                                <label>1. ¿Qué recursos adicionales considera necesarios para mejorar la productividad?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="recursos_productividad" value="personal"><label>Más personal</label></div>
+                                    <div class="radio-option"><input type="radio" name="recursos_productividad" value="equipo"><label>Mejor equipo</label></div>
+                                    <div class="radio-option"><input type="radio" name="recursos_productividad" value="insumos"><label>Insumos de mayor calidad</label></div>
+                                    <div class="radio-option"><input type="radio" name="recursos_productividad" value="capacitacion"><label>Capacitación periódica del personal</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>2. ¿Qué acciones cree que ayudarían a garantizar una mayor seguridad en planta?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="seguridad_planta" value="capacitaciones"><label>Más capacitaciones de seguridad</label></div>
+                                    <div class="radio-option"><input type="radio" name="seguridad_planta" value="supervision"><label>Supervisión constante</label></div>
+                                    <div class="radio-option"><input type="radio" name="seguridad_planta" value="equipos"><label>Mejoras en equipos de producción</label></div>
+                                    <div class="radio-option"><input type="radio" name="seguridad_planta" value="senalizacion"><label>Señalización adecuada</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>3. ¿Cuál es el procedimiento que emplean para la gestión y manipulación de desechos?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="gestion_desechos" value="clasificacion"><label>Clasificación de residuos</label></div>
+                                    <div class="radio-option"><input type="radio" name="gestion_desechos" value="reciclaje"><label>Reciclaje</label></div>
+                                    <div class="radio-option"><input type="radio" name="gestion_desechos" value="proveedor_externo"><label>Gestión por proveedor externo</label></div>
+                                    <div class="radio-option"><input type="radio" name="gestion_desechos" value="otro"><label>Otro</label></div>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label>4. En caso de existir sobrantes, ¿se reutilizan en nuevos proyectos con el objetivo de optimizar recursos y reducir costos?</label>
+                                <div class="radio-group">
+                                    <div class="radio-option"><input type="radio" name="reutilizacion_sobrantes" value="siempre"><label>Sí, siempre</label></div>
+                                    <div class="radio-option"><input type="radio" name="reutilizacion_sobrantes" value="a_veces"><label>A veces</label></div>
+                                    <div class="radio-option"><input type="radio" name="reutilizacion_sobrantes" value="nunca"><label>No, nunca</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button class="generate-btn" onclick="generateAnalysis()">
+                        📊 Generar Análisis Integral
+                    </button>
+                    <button class="generate-btn reset-btn" onclick="resetForm()">
+                        🔄 Resetear Formulario
+                    </button>
+                    <button class="generate-btn export-btn" onclick="exportResults()">
+                        📄 Exportar Reporte
+                    </button>
+                </div>
+            </div>
+            
+            <div class="charts-section">
+                <div class="section-header">
+                    📈 Análisis de Riesgos y Cumplimiento
+                </div>
+                
+                <div class="stats-summary">
+                    <h3 style="color: #2c3e50; margin-bottom: 15px;">Resumen Ejecutivo</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number" id="cumplimiento-manuales">0%</div>
+                            <div class="stat-label">Cumpl. Manuales</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="riesgo-fiscal">0</div>
+                            <div class="stat-label">Riesgo Fiscal</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="madurez-estrategica">0%</div>
+                            <div class="stat-label">Madurez Estratég.</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="areas-criticas">0</div>
+                            <div class="stat-label">Áreas Críticas</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="risk-assessment" class="chart-card">
+                    <h3>Evaluación de Riesgos</h3>
+                    <div id="risk-indicators">
+                        <p style="text-align: center; color: #7f8c8d;">Complete el formulario para ver la evaluación de riesgos</p>
+                    </div>
+                </div>
+                
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>Cumplimiento por Área</h3>
+                        <div class="chart-container">
+                            <canvas id="complianceChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3>Riesgo Fiscal y Legal</h3>
+                        <div class="chart-container">
+                            <canvas id="riskChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3>Madurez Organizacional</h3>
+                        <div class="chart-container">
+                            <canvas id="maturityChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3>Análisis Comparativo</h3>
+                        <div class="chart-container">
+                            <canvas id="comparativeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let complianceChart, riskChart, maturityChart, comparativeChart;
+        
+        // Función para cambiar pestañas
+        function showTab(tabName) {
+            // Ocultar todas las pestañas
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Mostrar la pestaña seleccionada
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Función para obtener datos del formulario expandido
+        function getFormData() {
+            const data = {
+                manuales: {},
+                fiscal: {},
+                administrativo: {},
+                ventas: {},
+                produccion: {}
+            };
+            
+            // Datos de cumplimiento de manuales (expandidos)
+            const manualFields = [
+                'gg_manual', 'gg_formacion', 'gg_liderazgo', 'gg_software', 'gg_regulaciones',
+                'go_formacion', 'go_iso', 'go_coordinacion', 'go_seguridad',
+                'eo_formacion', 'eo_normas_seguridad', 'eo_inspecciones', 'eo_informes',
+                'cont_colegiado', 'cont_especializacion', 'cont_sat', 'cont_experiencia',
+                'ev_formacion', 'ev_especializacion', 'ev_marketing',
+                'vend_formacion', 'vend_tecnicas',
+                'fab_formacion', 'fab_tecnologia', 'fab_cad',
+                'inst_experiencia', 'inst_seguridad'
+            ];
+            
+            manualFields.forEach(field => {
+                const radio = document.querySelector(`input[name="${field}"]:checked`);
+                data.manuales[field] = radio ? radio.value : null;
+            });
+            
+            // Datos fiscales y legales (expandidos)
+            const fiscalFields = [
+                'regimen_fiscal', 'estados_financieros', 'compromisos_financieros', 'flujo_efectivo',
+                'declaraciones_fiscales', 'asesoria_fiscal', 'planilla_empleados', 'reformas_laborales',
+                'reglamentos_internos', 'conflictos_laborales', 'pagos_igss',
+                'fiscalizaciones_sat', 'deuda_tributaria', 'libros_iva', 'contingencias_legales'
+            ];
+            
+            fiscalFields.forEach(field => {
+                const radio = document.querySelector(`input[name="${field}"]:checked`);
+                data.fiscal[field] = radio ? radio.value : null;
+            });
+            
+            // Datos administrativos
+            const adminFields = [
+                'plan_estrategico', 'revision_manuales', 'comunicacion_depto', 'cambios_estructura',
+                'indicadores_desempeno', 'frecuencia_objetivos', 'alineacion_objetivos',
+                'herramientas_decisiones', 'mejora_evaluacion'
+            ];
+            
+            adminFields.forEach(field => {
+                const radio = document.querySelector(`input[name="${field}"]:checked`);
+                data.administrativo[field] = radio ? radio.value : null;
+            });
+            
+            // Datos de ventas
+            const ventasFields = [
+                'procesos_captacion', 'herramientas_crm', 'politicas_precios',
+                'indicadores_ventas', 'frecuencia_metas', 'cumplimiento_metas',
+                'obstaculos_ventas', 'mejoras_retencion', 'capacitaciones_ventas',
+                'mercado_objetivo', 'conocimiento_competencia', 'ventajas_competitivas'
+            ];
+            
+            ventasFields.forEach(field => {
+                const radio = document.querySelector(`input[name="${field}"]:checked`);
+                data.ventas[field] = radio ? radio.value : null;
+            });
+            
+            // Datos de producción
+            const produccionFields = [
+                'procedimientos_produccion', 'controles_calidad', 'equipo_seguridad',
+                'objetivos_produccion', 'medicion_tiempos', 'indicadores_produccion',
+                'recursos_productividad', 'seguridad_planta'
+            ];
+            
+            produccionFields.forEach(field => {
+                const radio = document.querySelector(`input[name="${field}"]:checked`);
+                data.produccion[field] = radio ? radio.value : null;
+            });
+            
+            return data;
+        }
+        
+        // Función mejorada para calcular scores
+        function calculateScores(data) {
+            // Calcular cumplimiento de manuales con más detalle
+            let manualScore = 0;
+            let manualCount = 0;
+            
+            Object.values(data.manuales).forEach(value => {
+                if (value !== null) {
+                    manualCount++;
+                    if (value === 'completo' || value === 'exacta' || value === 'activo' || 
+                        value === 'formal' || value === 'avanzado' || value === 'practico' ||
+                        value === 'sistematico' || value === 'completos' || value === 'mas3') {
+                        manualScore += 3;
+                    } else if (value === 'desactualizado' || value === 'relacionada' || 
+                              value === 'proceso' || value === 'basico' || value === 'teorico' ||
+                              value === 'ocasional' || value === 'tecnica' || value === 'capacitacion' ||
+                              value === 'empirico' || value === '1a3') {
+                        manualScore += 1.5;
+                    }
+                }
+            });
+            
+            const manualPercentage = manualCount > 0 ? Math.round((manualScore / (manualCount * 3)) * 100) : 0;
+            
+            // Calcular riesgo fiscal con más factores
+            let riskScore = 0;
+            
+            // Riesgos fiscales críticos
+            if (data.fiscal.regimen_fiscal === 'nosabe') riskScore += 4;
+            if (data.fiscal.estados_financieros === 'no') riskScore += 4;
+            if (data.fiscal.declaraciones_fiscales === 'retrasos_mayores') riskScore += 5;
+            if (data.fiscal.deuda_tributaria === 'significativa') riskScore += 4;
+            if (data.fiscal.fiscalizaciones_sat === 'con_observaciones') riskScore += 3;
+            if (data.fiscal.libros_iva === 'deficiente') riskScore += 3;
+            if (data.fiscal.asesoria_fiscal === 'no') riskScore += 2;
+            
+            // Riesgos laborales
+            if (data.fiscal.planilla_empleados === 'honorarios') riskScore += 4;
+            if (data.fiscal.reformas_laborales === 'no') riskScore += 2;
+            if (data.fiscal.reglamentos_internos === 'no') riskScore += 2;
+            if (data.fiscal.conflictos_laborales === 'significativos') riskScore += 3;
+            if (data.fiscal.pagos_igss === 'retraso_mayor') riskScore += 4;
+            
+            // Riesgos contingentes
+            if (data.fiscal.compromisos_financieros === 'significativos') riskScore += 3;
+            if (data.fiscal.contingencias_legales === 'significativas') riskScore += 3;
+            if (data.fiscal.flujo_efectivo === 'sin_control') riskScore += 2;
+            
+            // Calcular madurez estratégica
+            let strategyScore = 0;
+            let strategyCount = 0;
+            
+            // Administrativo
+            Object.values(data.administrativo).forEach(value => {
+                if (value !== null) {
+                    strategyCount++;
+                    if (value === 'si' || value === 'mensual' || value === 'reuniones' || 
+                        value === 'totalmente' || value === 'analisis_datos' || value === 'indicadores') {
+                        strategyScore += 3;
+                    } else if (value === 'parcialmente' || value === 'trimestral' || value === 'informes' || 
+                              value === 'benchmarking' || value === 'retroalimentacion') {
+                        strategyScore += 1.5;
+                    }
+                }
+            });
+            
+            // Ventas
+            Object.values(data.ventas).forEach(value => {
+                if (value !== null) {
+                    strategyCount++;
+                    if (value === 'documentados' || value === 'crm' || value === 'supervision_directa' ||
+                        value === 'semanal' || value === '76_100' || value === 'identificados' ||
+                        value === 'calidad') {
+                        strategyScore += 3;
+                    } else if (value === 'informales' || value === 'reportes' || value === 'mensual' ||
+                              value === '51_75' || value === 'parcial') {
+                        strategyScore += 1.5;
+                    }
+                }
+            });
+            
+            // Producción
+            Object.values(data.produccion).forEach(value => {
+                if (value !== null) {
+                    strategyCount++;
+                    if (value === 'actualizados' || value === 'inspeccion' || value === 'completo' ||
+                        value === 'diarios' || value === 'ciclos' || value === 'capacitaciones') {
+                        strategyScore += 3;
+                    } else if (value === 'desactualizados' || value === 'muestreo' || value === 'parcial' ||
+                              value === 'semanales' || value === 'defectos') {
+                        strategyScore += 1.5;
+                    }
+                }
+            });
+            
+            const strategyPercentage = strategyCount > 0 ? Math.round((strategyScore / (strategyCount * 3)) * 100) : 0;
+            
+            // Contar áreas críticas
+            let criticalAreas = 0;
+            if (manualPercentage < 50) criticalAreas++;
+            if (riskScore >= 15) criticalAreas++;
+            if (strategyPercentage < 50) criticalAreas++;
+            if (data.ventas.cumplimiento_metas === '0_25' || data.ventas.cumplimiento_metas === '26_50') criticalAreas++;
+            
+            return {
+                manualCompliance: manualPercentage,
+                fiscalRisk: riskScore,
+                strategicMaturity: strategyPercentage,
+                criticalAreas: criticalAreas
+            };
+        }
+        
+        // Función para actualizar estadísticas
+        function updateStats(scores) {
+            document.getElementById('cumplimiento-manuales').textContent = `${scores.manualCompliance}%`;
+            document.getElementById('riesgo-fiscal').textContent = scores.fiscalRisk;
+            document.getElementById('madurez-estrategica').textContent = `${scores.strategicMaturity}%`;
+            document.getElementById('areas-criticas').textContent = scores.criticalAreas;
+        }
+        
+        // Función expandida para generar indicadores de riesgo
+        function generateRiskIndicators(scores) {
+            const riskContainer = document.getElementById('risk-indicators');
+            riskContainer.innerHTML = '';
+            
+            // Evaluación de cumplimiento de manuales
+            let manualRisk = 'low';
+            let manualText = 'Cumplimiento adecuado de manuales de funciones';
+            if (scores.manualCompliance < 40) {
+                manualRisk = 'high';
+                manualText = 'CRÍTICO: Bajo cumplimiento de manuales - Riesgo operativo alto. Se requiere intervención inmediata para actualizar y capacitar al personal.';
+            } else if (scores.manualCompliance < 70) {
+                manualRisk = 'medium';
+                manualText = 'Cumplimiento parcial de manuales - Requiere atención. Implementar plan de mejora gradual.';
+            }
+            
+            // Evaluación de riesgo fiscal
+            let fiscalRisk = 'low';
+            let fiscalText = 'Cumplimiento fiscal adecuado';
+            if (scores.fiscalRisk >= 20) {
+                fiscalRisk = 'high';
+                fiscalText = 'ALERTA MÁXIMA: Riesgo fiscal extremo - Intervención legal urgente. Multas, sanciones y clausura posible.';
+            } else if (scores.fiscalRisk >= 10) {
+                fiscalRisk = 'high';
+                fiscalText = 'CRÍTICO: Alto riesgo fiscal y legal - Asesoría inmediata necesaria. Riesgo de sanciones SAT.';
+            } else if (scores.fiscalRisk >= 5) {
+                fiscalRisk = 'medium';
+                fiscalText = 'Riesgo fiscal moderado - Requiere regularización gradual y asesoría profesional.';
+            }
+            
+            // Evaluación estratégica
+            let strategyRisk = 'low';
+            let strategyText = 'Madurez organizacional adecuada';
+            if (scores.strategicMaturity < 40) {
+                strategyRisk = 'high';
+                strategyText = 'Baja madurez organizacional - Riesgo de sostenibilidad empresarial. Implementar plan de desarrollo organizacional.';
+            } else if (scores.strategicMaturity < 70) {
+                strategyRisk = 'medium';
+                strategyText = 'Madurez organizacional en desarrollo - Oportunidades de mejora significativas.';
+            }
+            
+            riskContainer.innerHTML = `
+                <div class="risk-indicator risk-${manualRisk}">
+                    <strong>Cumplimiento Manuales:</strong> ${manualText}
+                </div>
+                <div class="risk-indicator risk-${fiscalRisk}">
+                    <strong>Riesgo Fiscal-Legal:</strong> ${fiscalText}
+                </div>
+                <div class="risk-indicator risk-${strategyRisk}">
+                    <strong>Madurez Estratégica:</strong> ${strategyText}
+                </div>
+            `;
+        }
+        
+        // Función expandida para crear gráficos
+        function createCharts(data, scores) {
+            // Limpiar gráficos existentes
+            if (complianceChart) complianceChart.destroy();
+            if (riskChart) riskChart.destroy();
+            if (maturityChart) maturityChart.destroy();
+            if (comparativeChart) comparativeChart.destroy();
+            
+            // Gráfico de cumplimiento por área
+            const ctxCompliance = document.getElementById('complianceChart').getContext('2d');
+            complianceChart = new Chart(ctxCompliance, {
+                type: 'bar',
+                data: {
+                    labels: ['Manuales', 'Administrativo', 'Ventas', 'Producción'],
+                    datasets: [{
+                        label: 'Porcentaje de Cumplimiento',
+                        data: [
+                            scores.manualCompliance, 
+                            calculateAreaScore(data.administrativo),
+                            calculateAreaScore(data.ventas),
+                            calculateAreaScore(data.produccion)
+                        ],
+                        backgroundColor: [
+                            getScoreColor(scores.manualCompliance),
+                            getScoreColor(calculateAreaScore(data.administrativo)),
+                            getScoreColor(calculateAreaScore(data.ventas)),
+                            getScoreColor(calculateAreaScore(data.produccion))
+                        ],
+                        borderRadius: 5,
+                        borderWidth: 2,
+                        borderColor: '#2c3e50'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: function(context) {
+                                    const value = context.parsed.y;
+                                    if (value >= 70) return 'Estado: Bueno';
+                                    if (value >= 40) return 'Estado: Regular';
+                                    return 'Estado: Crítico';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico de riesgo fiscal
+            const ctxRisk = document.getElementById('riskChart').getContext('2d');
+            const riskLevel = scores.fiscalRisk <= 5 ? 'Bajo' : scores.fiscalRisk <= 15 ? 'Medio' : 'Alto';
+            const riskData = scores.fiscalRisk <= 5 ? [1, 0, 0] : scores.fiscalRisk <= 15 ? [0, 1, 0] : [0, 0, 1];
+            
+            riskChart = new Chart(ctxRisk, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Riesgo Bajo (0-5)', 'Riesgo Medio (6-15)', 'Riesgo Alto (+15)'],
+                    datasets: [{
+                        data: riskData,
+                        backgroundColor: ['#27ae60', '#f39c12', '#e74c3c'],
+                        borderWidth: 3,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: function(context) {
+                                    return `Puntuación actual: ${scores.fiscalRisk}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico de madurez organizacional
+            const ctxMaturity = document.getElementById('maturityChart').getContext('2d');
+            maturityChart = new Chart(ctxMaturity, {
+                type: 'radar',
+                data: {
+                    labels: [
+                        'Plan Estratégico', 
+                        'Comunicación', 
+                        'Indicadores', 
+                        'Conocimiento Mercado', 
+                        'Procesos Producción', 
+                        'Seguridad Laboral'
+                    ],
+                    datasets: [{
+                        label: 'Nivel Actual',
+                        data: [
+                            getRadarValue(data.administrativo.plan_estrategico),
+                            getRadarValue(data.administrativo.comunicacion_depto),
+                            getRadarValue(data.administrativo.indicadores_desempeno),
+                            getRadarValue(data.ventas.conocimiento_competencia),
+                            getRadarValue(data.produccion.procedimientos_produccion),
+                            getRadarValue(data.produccion.equipo_seguridad)
+                        ],
+                        backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                        borderColor: 'rgba(52, 152, 219, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(52, 152, 219, 1)',
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico comparativo nuevo
+            const ctxComparative = document.getElementById('comparativeChart').getContext('2d');
+            comparativeChart = new Chart(ctxComparative, {
+                type: 'line',
+                data: {
+                    labels: ['Manuales', 'Fiscal', 'Administrativo', 'Ventas', 'Producción'],
+                    datasets: [{
+                        label: 'Estado Actual',
+                        data: [
+                            scores.manualCompliance,
+                            Math.max(0, 100 - scores.fiscalRisk * 4),
+                            calculateAreaScore(data.administrativo),
+                            calculateAreaScore(data.ventas),
+                            calculateAreaScore(data.produccion)
+                        ],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Meta Ideal (80%)',
+                        data: [80, 80, 80, 80, 80],
+                        borderColor: '#27ae60',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        borderDash: [5, 5]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            max: 100 
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Funciones auxiliares
+        function calculateAreaScore(areaData) {
+            let score = 0;
+            let count = 0;
+            
+            Object.values(areaData).forEach(value => {
+                if (value !== null) {
+                    count++;
+                    if (['si', 'documentados', 'crm', 'supervision_directa', 'semanal', '76_100', 
+                         'identificados', 'actualizados', 'inspeccion', 'completo', 'diarios'].includes(value)) {
+                        score += 3;
+                    } else if (['parcialmente', 'informales', 'reportes', 'mensual', '51_75', 
+                              'parcial', 'desactualizados', 'muestreo', 'semanales'].includes(value)) {
+                        score += 1.5;
+                    }
+                }
+            });
+            
+            return count > 0 ? Math.round((score / (count * 3)) * 100) : 0;
+        }
+        
+        function getScoreColor(score) {
+            if (score >= 70) return '#27ae60';
+            if (score >= 40) return '#f39c12';
+            return '#e74c3c';
+        }
+        
+        function getRadarValue(value) {
+            if (!value) return 0;
+            if (['si', 'reuniones', 'financieros', 'identificados', 'actualizados', 'completo'].includes(value)) return 100;
+            if (['parcialmente', 'informes', 'parcial', 'desactualizados', 'parcial'].includes(value)) return 50;
+            return 25;
+        }
+        
+        // Función principal para generar análisis
+        function generateAnalysis() {
+            const data = getFormData();
+            const scores = calculateScores(data);
+            
+            updateStats(scores);
+            generateRiskIndicators(scores);
+            createCharts(data, scores);
+        }
+        
+        // Función para resetear formulario
+        function resetForm() {
+            if (confirm('¿Está seguro de que desea resetear todo el formulario? Se perderán todos los datos ingresados.')) {
+                document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                    radio.checked = false;
+                });
+                
+                document.getElementById('cumplimiento-manuales').textContent = '0%';
+                document.getElementById('riesgo-fiscal').textContent = '0';
+                document.getElementById('madurez-estrategica').textContent = '0%';
+                document.getElementById('areas-criticas').textContent = '0';
+                
+                document.getElementById('risk-indicators').innerHTML = '<p style="text-align: center; color: #7f8c8d;">Complete el formulario para ver la evaluación de riesgos</p>';
+                
+                if (complianceChart) complianceChart.destroy();
+                if (riskChart) riskChart.destroy();
+                if (maturityChart) maturityChart.destroy();
+                if (comparativeChart) comparativeChart.destroy();
+            }
+        }
+        
+        // Función mejorada para exportar resultados
+        function exportResults() {
+            const data = getFormData();
+            const scores = calculateScores(data);
+            
+            const report = {
+                fecha: new Date().toLocaleDateString('es-GT'),
+                hora: new Date().toLocaleTimeString('es-GT'),
+                empresa: 'Empresa Evaluada',
+                resumen_ejecutivo: {
+                    cumplimientoManuales: scores.manualCompliance + '%',
+                    riesgoFiscal: scores.fiscalRisk + ' puntos',
+                    madurezEstrategica: scores.strategicMaturity + '%',
+                    areasCriticas: scores.criticalAreas
+                },
+                evaluacion_detallada: {
+                    manuales_funciones: data.manuales,
+                    fiscal_legal: data.fiscal,
+                    administrativo: data.administrativo,
+                    ventas_mercadeo: data.ventas,
+                    produccion_operaciones: data.produccion
+                },
+                recomendaciones_prioritarias: generateRecommendations(scores, data),
+                plan_accion: generateActionPlan(scores, data)
+            };
+            
+            // Simular descarga de reporte
+            const reportText = JSON.stringify(report, null, 2);
+            const blob = new Blob([reportText], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `reporte_evaluacion_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('Reporte exportado exitosamente. En una implementación real, se generaría un PDF profesional con gráficos y análisis detallado.');
+        }
+        
+        // Función expandida para generar recomendaciones
+        function generateRecommendations(scores, data) {
+            const recommendations = [];
+            
+            // Recomendaciones por cumplimiento de manuales
+            if (scores.manualCompliance < 50) {
+                recommendations.push({
+                    prioridad: 'ALTA',
+                    area: 'Manuales de Funciones',
+                    accion: 'Actualizar y socializar inmediatamente todos los manuales de puestos y funciones',
+                    plazo: '30 días',
+                    responsable: 'Gerencia General + RRHH'
+                });
+            }
+            
+            // Recomendaciones fiscales críticas
+            if (scores.fiscalRisk >= 15) {
+                recommendations.push({
+                    prioridad: 'CRÍTICA',
+                    area: 'Cumplimiento Fiscal',
+                    accion: 'Contratar asesoría fiscal especializada y regularizar situación ante SAT',
+                    plazo: '15 días',
+                    responsable: 'Gerencia General + Contador'
+                });
+            }
+            
+            if (data.fiscal.planilla_empleados === 'honorarios') {
+                recommendations.push({
+                    prioridad: 'ALTA',
+                    area: 'Cumplimiento Laboral',
+                    accion: 'Regularizar situación laboral del personal - Riesgo de multas IGSS',
+                    plazo: '60 días',
+                    responsable: 'RRHH + Asesor Legal'
+                });
+            }
+            
+            // Recomendaciones estratégicas
+            if (scores.strategicMaturity < 50) {
+                recommendations.push({
+                    prioridad: 'MEDIA',
+                    area: 'Desarrollo Organizacional',
+                    accion: 'Implementar sistema de gestión estratégica con indicadores de desempeño',
+                    plazo: '90 días',
+                    responsable: 'Gerencia General'
+                });
+            }
+            
+            if (data.ventas.cumplimiento_metas === '0_25' || data.ventas.cumplimiento_metas === '26_50') {
+                recommendations.push({
+                    prioridad: 'ALTA',
+                    area: 'Ventas',
+                    accion: 'Revisar estrategia comercial y capacitar equipo de ventas',
+                    plazo: '45 días',
+                    responsable: 'Gerente Comercial'
+                });
+            }
+            
+            return recommendations;
+        }
+        
+        // Función para generar plan de acción
+        function generateActionPlan(scores, data) {
+            const plan = {
+                fase_1_urgente: [],
+                fase_2_corto_plazo: [],
+                fase_3_mediano_plazo: []
+            };
+            
+            // Fase 1: Acciones urgentes (0-30 días)
+            if (scores.fiscalRisk >= 15) {
+                plan.fase_1_urgente.push('Contratar asesor fiscal inmediato');
+                plan.fase_1_urgente.push('Auditar situación tributaria completa');
+            }
+            
+            if (scores.manualCompliance < 40) {
+                plan.fase_1_urgente.push('Actualizar manuales críticos de funciones');
+            }
+            
+            // Fase 2: Corto plazo (30-90 días)
+            if (data.fiscal.planilla_empleados !== 'todos') {
+                plan.fase_2_corto_plazo.push('Regularizar situación laboral del personal');
+            }
+            
+            plan.fase_2_corto_plazo.push('Implementar controles financieros básicos');
+            
+            // Fase 3: Mediano plazo (90-180 días)
+            plan.fase_3_mediano_plazo.push('Desarrollar plan estratégico formal');
+            plan.fase_3_mediano_plazo.push('Implementar sistema de indicadores de gestión');
+            plan.fase_3_mediano_plazo.push('Capacitación integral del personal');
+            
+            return plan;
+        }
+        
+        // Función para cargar datos de ejemplo (mejorada)
+        function loadSampleData() {
+            // Datos de manuales
+            document.querySelector('input[name="gg_manual"][value="desactualizado"]').checked = true;
+            document.querySelector('input[name="gg_formacion"][value="completo"]').checked = true;
+            document.querySelector('input[name="gg_software"][value="gestion"]').checked = true;
+            
+            // Datos fiscales críticos para demostrar riesgos
+            document.querySelector('input[name="regimen_fiscal"][value="utilidades"]').checked = true;
+            document.querySelector('input[name="estados_financieros"][value="parcial"]').checked = true;
+            document.querySelector('input[name="planilla_empleados"][value="mixto"]').checked = true;
+            document.querySelector('input[name="declaraciones_fiscales"][value="retraso_menor"]').checked = true;
+            
+            // Datos administrativos
+            document.querySelector('input[name="plan_estrategico"][value="parcialmente"]').checked = true;
+            document.querySelector('input[name="revision_manuales"][value="trimestral"]').checked = true;
+            
+            // Datos de ventas
+            document.querySelector('input[name="procesos_captacion"][value="informales"]').checked = true;
+            document.querySelector('input[name="cumplimiento_metas"][value="51_75"]').checked = true;
+            
+            // Datos de producción
+            document.querySelector('input[name="procedimientos_produccion"][value="desactualizados"]').checked = true;
+            document.querySelector('input[name="equipo_seguridad"][value="parcial"]').checked = true;
+        }
+        
+        // Auto-guardado simulado cada 2 minutos
+        function autoSave() {
+            const data = getFormData();
+            if (Object.values(data).some(area => Object.values(area).some(val => val !== null))) {
+                console.log('Auto-guardado realizado:', new Date().toLocaleTimeString());
+                // En implementación real: localStorage.setItem('evaluacion_data', JSON.stringify(data));
+            }
+        }
+        
+        // // Inicialización
+        // window.addEventListener('load', function() {
+        //     // Cargar datos de ejemplo después de 1.5 segundos
+        //     setTimeout(() => {
+        //         if (confirm('¿Desea cargar datos de ejemplo para demostrar el funcionamiento del sistema?')) {
+        //             loadSampleData();
+        //             generateAnalysis();
+        //         }
+        //     }, 1500);
+            
+        //     // Iniciar auto-guardado
+        //     setInterval(autoSave, 120000); // cada 2 minutos
+        // });
+        
+        // Prevenir pérdida de datos al salir
+        window.addEventListener('beforeunload', function(e) {
+            const data = getFormData();
+            if (Object.values(data).some(area => Object.values(area).some(val => val !== null))) {
+                e.preventDefault();
+                e.returnValue = '¿Está seguro de que desea salir? Se pueden perder los datos no guardados.';
+            }
+        });
+    </script>
+</body>
+</html>
