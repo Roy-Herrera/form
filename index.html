@@ -316,15 +316,38 @@
                 gap: 8px;
             }
         }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .header-text {
+            flex: 1; /* ocupa el espacio central */
+            text-align: center;
+        }
+
+        .header img {
+            width: 120px; /* ajusta tamaño a lo que necesites */
+            height: auto;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Evaluación Integral Empresarial Expandida</h1>
-            <p>Asesoría Fiscal y Legal - Análisis Completo de Cumplimiento y Riesgos</p>
+            <img src="./USAC.png" alt="Logo USAC" class="logo-left">
+            <div class="header-text">
+                <h1>Evaluación Integral Empresarial Expandida</h1>
+                <p>Asesoría Fiscal y Legal - Análisis Completo de Cumplimiento y Riesgos</p>
+                <p>Universidad de San Carlos de Guatemala USAC - Centro Universitario de Occidente CUNOC</p>
+            </div>
+            <img src="./CE.png" alt="Logo CE" class="logo-right">
         </div>
-        
+
         <div class="main-content">
             <div class="form-section">
                 <div class="section-header">
